@@ -11,10 +11,11 @@ import joblib
 import numpy as np
 import pandas as pd
 from sklearn.ensemble import RandomForestClassifier
+from sklearn.base import clone
 from sklearn.impute import SimpleImputer
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import f1_score, precision_score, recall_score
-from sklearn.model_selection import train_test_split
+from sklearn.model_selection import KFold, train_test_split
 from sklearn.multiclass import OneVsRestClassifier
 from sklearn.multioutput import MultiOutputClassifier
 from sklearn.pipeline import Pipeline
@@ -75,7 +76,10 @@ def build_models() -> dict[str, Any]:
         "RBF SVM": Pipeline([
             ("imputer", SimpleImputer(strategy="median")),
             ("scale", StandardScaler()),
-            ("model", OneVsRestClassifier(SVC(kernel="rbf", C=2.0, gamma="scale", probability=False,
+            # Omit `probability`: sklearn 1.9 deprecates setting it even to False.
+            # Its default keeps probability estimation disabled, so predictions
+            # are ranked from the SVM decision margins in probability_matrix().
+            ("model", OneVsRestClassifier(SVC(kernel="rbf", C=2.0, gamma="scale",
                                                 class_weight="balanced", random_state=SEED))),
         ]),
         "Random Forest": Pipeline([
@@ -135,8 +139,8 @@ def evaluate(data: pd.DataFrame, y: np.ndarray, labels: list[str], output_dir: s
     X = data[FEATURES]
     indices = np.arange(len(data))
     train_idx, test_idx = train_test_split(indices, test_size=0.20, random_state=SEED, shuffle=True)
-    X_train, X_test = X.iloc[train_idx], X.iloc[test_idx]
-    y_train, y_test = y[train_idx], y[test_idx]
+    X_development, X_test = X.iloc[train_idx], X.iloc[test_idx]
+    y_development, y_test = y[train_idx], y[test_idx]
 
     summary: dict[str, Any] = {
         "dataset": "User-supplied Spotify Songs CSV",
@@ -151,26 +155,63 @@ def evaluate(data: pd.DataFrame, y: np.ndarray, labels: list[str], output_dir: s
         "tracks_with_multiple_genres": int(np.sum(y.sum(axis=1) > 1)),
         "split": {"train": int(len(train_idx)), "test": int(len(test_idx)), "test_fraction": 0.20,
                   "unit": "unique track_id"},
+        "cross_validation": {"folds": 5, "selection_metric": "mean macro F1",
+                             "unit": "unique track_id within development set"},
         "models": {},
     }
-    best_name, best_score, best_model, best_probabilities = None, -1.0, None, None
-    for name, model in build_models().items():
-        print(f"Training {name}...", flush=True)
-        model.fit(X_train, y_train)
-        probs = probability_matrix(model, X_test)
-        y_pred, model_metrics = _scores(y_test, probs)
-        model_metrics["per_genre"] = {}
-        for col, label in enumerate(labels):
-            model_metrics["per_genre"][label] = {
-                "f1": float(f1_score(y_test[:, col], y_pred[:, col], zero_division=0)),
-                "support": int(y_test[:, col].sum()),
-            }
-        summary["models"][name] = model_metrics
-        if model_metrics["macro_f1"] > best_score:
-            best_name, best_score, best_model, best_probabilities = name, model_metrics["macro_f1"], model, probs
+    fold_splitter = KFold(n_splits=5, shuffle=True, random_state=SEED)
+    candidate_models = build_models()
+    best_name, best_score = None, -1.0
+    for name, model_template in candidate_models.items():
+        print(f"Cross-validating {name}...", flush=True)
+        fold_metrics: list[dict[str, Any]] = []
+        fold_genre_f1: list[list[float]] = []
+        for fold_train_idx, fold_valid_idx in fold_splitter.split(X_development):
+            model = clone(model_template)
+            X_fold_train = X_development.iloc[fold_train_idx]
+            X_fold_valid = X_development.iloc[fold_valid_idx]
+            y_fold_train = y_development[fold_train_idx]
+            y_fold_valid = y_development[fold_valid_idx]
+            model.fit(X_fold_train, y_fold_train)
+            fold_probs = probability_matrix(model, X_fold_valid)
+            fold_pred, metrics = _scores(y_fold_valid, fold_probs)
+            fold_metrics.append(metrics)
+            fold_genre_f1.append([
+                float(f1_score(y_fold_valid[:, col], fold_pred[:, col], zero_division=0))
+                for col in range(len(labels))
+            ])
 
+        cv_metrics = {
+            metric: float(np.mean([fold[metric] for fold in fold_metrics]))
+            for metric in fold_metrics[0]
+        }
+        cv_metrics["per_genre"] = {
+            label: {
+                "f1": float(np.mean([fold[col] for fold in fold_genre_f1])),
+                "support": int(y_development[:, col].sum()),
+            }
+            for col, label in enumerate(labels)
+        }
+        summary["models"][name] = cv_metrics
+        if cv_metrics["macro_f1"] > best_score:
+            best_name, best_score = name, cv_metrics["macro_f1"]
+
+    # The held-out test set is first used here, after model selection is complete.
+    print(f"Fitting selected model ({best_name}) on the full development set...", flush=True)
+    best_model = candidate_models[best_name]
+    best_model.fit(X_development, y_development)
+    best_probabilities = probability_matrix(best_model, X_test)
+    test_pred, test_metrics = _scores(y_test, best_probabilities)
+    test_metrics["per_genre"] = {
+        label: {
+            "f1": float(f1_score(y_test[:, col], test_pred[:, col], zero_division=0)),
+            "support": int(y_test[:, col].sum()),
+        }
+        for col, label in enumerate(labels)
+    }
     summary["selected_model"] = best_name
-    summary["selection_metric"] = "macro F1 on fixed track-level test split"
+    summary["selection_metric"] = "mean macro F1 across 5-fold CV on development set"
+    summary["test_evaluation"] = test_metrics
     summary["note"] = "Scores are for the supplied CSV and must not be generalized to all Spotify tracks or listeners."
     (output_dir / "metrics.json").write_text(json.dumps(summary, indent=2), encoding="utf-8")
     joblib.dump({"model": best_model, "features": FEATURES, "classes": labels,

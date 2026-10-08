@@ -35,11 +35,11 @@ The last command extracts and validates `spotify_songs.csv` into `data/raw/spoti
 python -m src.playlist_curator
 ```
 
-The pipeline creates one row per unique track and a six-column multi-hot genre label. It uses an 80/20 random split at the unique-track level with seed 42. Median imputation and scaling are fitted inside the relevant model pipeline. It compares logistic regression, an RBF SVM, and a random forest. We report micro F1, macro F1, exact subset accuracy, top-1 genre hit rate, and recall at three. The selected model is the one with the highest macro F1 on this fixed held-out split.
+The pipeline creates one row per unique track and a six-column multi-hot genre label. It makes an 80/20 random split at the unique-track level with seed 42. The 20% test set stays untouched during model selection. On the 80% development set, it compares logistic regression, an RBF SVM, and a random forest with 5-fold cross-validation, selecting the model with the highest mean macro F1. Median imputation and scaling are fitted inside each model pipeline in every fold. The selected model is then trained on the full development set and evaluated once on the test set. We report micro F1, macro F1, exact subset accuracy, top-1 genre hit rate, and recall at three.
 
 Generated files under `results/`:
 
-- `metrics.json`: data dimensions, split counts, per-model and per-genre metrics.
+- `metrics.json`: data dimensions, split counts, per-model cross-validation metrics, and the selected model's final test metrics.
 - `test_predictions.csv`: held-out actual genres and predictions.
 - `playlist_model.joblib`: selected model and feature schema.
 
@@ -60,7 +60,7 @@ scripts/prepare_dataset.py        archive extraction and schema validation
 scripts/build_report.py           two-page PDF write-up from measured metrics
 scripts/build_presentation.mjs    editable six-slide deck from measured metrics
 output/project_report.pdf         assignment write-up
-output/project_presentation_final_updated.pptx  final review slides
+output/project_presentation_cv_final.pptx  final review slides
 ```
 
 ## Limitations

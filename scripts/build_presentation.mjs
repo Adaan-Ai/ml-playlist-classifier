@@ -6,8 +6,8 @@ import { Presentation, PresentationFile } from "@oai/artifact-tool";
 const workspaceDir = process.cwd();
 const buildDir = path.join(workspaceDir, ".codex-build");
 const outputDir = path.join(workspaceDir, "output");
-const finalPath = path.join(outputDir, "project_presentation_final_updated.pptx");
-const skillDir = "C:/Users/Mohammed Adaan/.codex/plugins/cache/openai-primary-runtime/presentations/26.1005.12141/skills/presentations";
+const finalPath = path.join(outputDir, "project_presentation_cv_final.pptx");
+const skillDir = "C:/Users/Mohammed Adaan/.codex/plugins/cache/openai-primary-runtime/presentations/26.1007.11041/skills/presentations";
 const metrics = JSON.parse(await fs.readFile(path.join(workspaceDir, "results/metrics.json"), "utf8"));
 await fs.mkdir(buildDir, { recursive: true });
 await fs.mkdir(outputDir, { recursive: true });
@@ -114,7 +114,7 @@ function bullets(slide, items, x = 90, y = 160, w = 1060, gap = 96, size = 24) {
 
 // 5. Results in an editable native table
 {
-  const slide = pres.slides.add(); heading(slide, "Held-out model comparison", 5);
+  const slide = pres.slides.add(); heading(slide, "5-fold cross-validation comparison", 5);
   const names = Object.keys(metrics.models);
   const rows = [["Model", "Micro F1", "Macro F1", "Top-1 hit", "Recall@3"], ...names.map(name => [
     name,
@@ -132,11 +132,12 @@ function bullets(slide, items, x = 90, y = 160, w = 1060, gap = 96, size = 24) {
   for (let c = 0; c < rows[0].length; c++) table.getCell(selectedRow, c).fill = C.mint;
   text(slide, "Selected model", 930, 178, 250, 26, 16, C.slate, true, "selected-label");
   text(slide, metrics.selected_model, 930, 224, 260, 42, 28, C.teal, true, "selected-model");
-  text(slide, `Macro F1: ${metrics.models[metrics.selected_model].macro_f1.toFixed(3)}`, 930, 292, 260, 32, 20, C.ink, false, "best-f1");
-  text(slide, `Exact match: ${metrics.models[metrics.selected_model].subset_accuracy.toFixed(3)}`, 930, 334, 260, 56, 20, C.ink, false, "best-exact-match");
-  text(slide, `${metrics.split.test.toLocaleString()} held-out tracks`, 930, 414, 260, 30, 17, C.slate, false, "test-count");
-  text(slide, "One random track-level split. Scores can vary with the sample.", 88, 560, 1000, 28, 16, C.slate, false, "results-caveat");
-  slide.speakerNotes.text = `The table shows measured metrics from results/metrics.json. Macro F1 gives each genre equal weight. The selected model is ${metrics.selected_model}. The test split groups by unique track ID but remains a single split rather than cross-validation. Dataset source noted in the archive: https://github.com/rfordatascience/tidytuesday/tree/master/data/2020/2020-01-21`;
+  text(slide, `CV Macro F1: ${metrics.models[metrics.selected_model].macro_f1.toFixed(3)}`, 930, 292, 260, 32, 19, C.ink, false, "cv-macro-f1");
+  text(slide, `Test Macro F1: ${metrics.test_evaluation.macro_f1.toFixed(3)}`, 930, 334, 260, 32, 19, C.ink, false, "test-macro-f1");
+  text(slide, `Test exact match: ${metrics.test_evaluation.subset_accuracy.toFixed(3)}`, 930, 376, 260, 42, 18, C.ink, false, "best-exact-match");
+  text(slide, `${metrics.split.test.toLocaleString()} untouched test tracks`, 930, 432, 260, 30, 16, C.slate, false, "test-count");
+  text(slide, "Table shows mean 5-fold CV scores on the 80% development set. The test set is evaluated once for the selected model.", 88, 546, 1100, 48, 16, C.slate, false, "results-caveat");
+  slide.speakerNotes.text = `The table shows mean 5-fold cross-validation metrics on the 80% development set. Macro F1 gives each genre equal weight and selects the model. The selected model, ${metrics.selected_model}, is then refit on all development tracks and evaluated once on the untouched ${metrics.split.test}-track test set; those final metrics are shown at right. Dataset source noted in the archive: https://github.com/rfordatascience/tidytuesday/tree/master/data/2020/2020-01-21`;
 }
 
 // 6. Demonstration and conclusion
@@ -177,6 +178,6 @@ await finalizePresentation({
   layoutArgs: ["--expected-slide-size-emu", "12192000,6858000", "--validate-heading-fit", "--require-native-table-slide", "5"],
   fontPolicy: { basis: "design", families: ["Arial"] },
   verifyArtifactToolImport: true,
-  receiptPath: path.join(buildDir, "project_presentation_final_v3.validation.json"),
+  receiptPath: path.join(buildDir, "project_presentation_cv_final.validation.json"),
 });
 console.log(finalPath);

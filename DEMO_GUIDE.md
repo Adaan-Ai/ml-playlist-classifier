@@ -5,7 +5,7 @@
 1. Install dependencies and place `spotify_songs.csv` at `data/raw/spotify_songs.csv` using `scripts/prepare_dataset.py`.
 2. Run `python -m src.playlist_curator` and confirm `results/metrics.json` exists.
 3. Run `streamlit run app.py` and keep the app open for the demonstration.
-4. Open `output/project_presentation_final_updated.pptx` and `output/project_report.pdf`.
+4. Open `output/project_presentation_cv_final.pptx` and `output/project_report.pdf`.
 5. Add both student names and section to the slides and PDF.
 
 ## Two-minute demo sequence
