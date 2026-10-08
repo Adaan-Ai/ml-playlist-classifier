@@ -56,7 +56,7 @@ function bullets(slide, items, x = 90, y = 160, w = 1060, gap = 96, size = 24) {
   text(slide, "Training a Playlist Curator\nBased on Track Features", 84, 176, 1040, 176, 48, C.white, true, "title");
   text(slide, "A genre-based, reproducible adaptation of the CS229 project", 86, 390, 980, 42, 23, "#D3DAE5", false, "subtitle");
   rule(slide, 86, 482, 690, "#3B506B", 2);
-  text(slide, "Team: __________________________     Section: __________", 86, 510, 1050, 28, 18, C.white, false, "team");
+  text(slide, "Team: Mohammed Adaan Hamad and Lakshya Jeet Singh     Section: E", 86, 510, 1100, 28, 18, C.white, false, "team");
   slide.speakerNotes.text = "Opening: this project adapts the supplied 2018 CS229 playlist-curation report. The data source and task proxy are explained on the following slides. References: https://cs229.stanford.edu/proj2018/report/22.pdf and https://cs229.stanford.edu/proj2018/poster/22.pdf";
 }
 

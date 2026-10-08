@@ -45,7 +45,7 @@ def build() -> Path:
 
     story = [
         Paragraph("Training a Playlist Curator Based on Track Features", base["TitleCustom"]),
-        Paragraph("UE24CS352A - Machine Learning Mini-Project | Team: __________________________ | Section: __________", base["SubtitleCustom"]),
+        Paragraph("UE24CS352A - Machine Learning Mini-Project | Team: Mohammed Adaan Hamad &amp; Lakshya Jeet Singh | Section: E", base["SubtitleCustom"]),
         Paragraph("Problem statement", base["SectionCustom"]),
         Paragraph("Given the audio features of a track, recommend the playlist genres that best fit it. A track can appear in multiple playlists, so we model genre assignment as a multi-label problem. The project adapts the supplied CS229 playlist-curation idea to the provided Spotify Songs dataset.", base["BodyCustom"]),
         Paragraph("Dataset", base["SectionCustom"]),

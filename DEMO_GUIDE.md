@@ -6,7 +6,7 @@
 2. Run `python -m src.playlist_curator` and confirm `results/metrics.json` exists.
 3. Run `streamlit run app.py` and keep the app open for the demonstration.
 4. Open `output/project_presentation_cv_final.pptx` and `output/project_report.pdf`.
-5. Add both student names and section to the slides and PDF.
+5. Confirm section E is shown on the slides and PDF.
 
 ## Two-minute demo sequence
 
@@ -42,5 +42,5 @@ Fill this in with the actual work completed by each team member before submissio
 
 | Team member | Contribution |
 |---|---|
-| [Name 1] | [Data preparation, model implementation, evaluation, or demo work] |
-| [Name 2] | [Report, slide deck, interface, or analysis work] |
+| Mohammed Adaan Hamad | [Data preparation, model implementation, evaluation, or demo work] |
+| Lakshya Jeet Singh | [Report, slide deck, interface, or analysis work] |

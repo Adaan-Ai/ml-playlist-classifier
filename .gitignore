@@ -8,3 +8,5 @@ models/
 results/playlist_model.joblib
 tmp/
 .codex-build/
+output/
+results/

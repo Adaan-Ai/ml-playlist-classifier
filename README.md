@@ -1,8 +1,8 @@
 # Playlist Curator: Predicting Playlist Genres
 
 **UE24CS352A - Machine Learning mini-project**  
-Team members: **____________________________**  
-Section: **____________**
+Team members: **Mohammed Adaan Hamad** and **Lakshya Jeet Singh**  
+Section: **E**
 
 ## What it does
 
