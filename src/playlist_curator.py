@@ -244,7 +244,7 @@ def recommend(model_bundle: dict[str, Any], tracks: pd.DataFrame, top_k: int = 3
     ranked = np.argsort(probs, axis=1)[:, ::-1]
     output = tracks[[c for c in (TRACK_ID, "track_name", "track_artist") if c in tracks]].copy()
     output["recommended_genres"] = [", ".join(labels[j] for j in order[:top_k]) for order in ranked]
-    output["top_genre_confidence"] = [float(prob[row, order[0]]) for row, (prob, order) in enumerate(zip(probs, ranked))]
+    output["top_genre_confidence"] = [float(prob[order[0]]) for prob, order in zip(probs, ranked)]
     output["ranked_genres"] = [", ".join(f"{labels[j]} ({prob[j]:.2f})" for j in order[:top_k])
                                for prob, order in zip(probs, ranked)]
     return output
