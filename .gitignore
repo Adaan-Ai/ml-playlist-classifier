@@ -1,0 +1,10 @@
+__pycache__/
+*.py[cod]
+.venv/
+.env
+data/raw/
+data/processed/
+models/
+results/playlist_model.joblib
+tmp/
+.codex-build/
