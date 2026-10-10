@@ -1,14 +1,21 @@
 import fs from "node:fs/promises";
 import path from "node:path";
-import { pathToFileURL } from "node:url";
 import { Presentation, PresentationFile } from "@oai/artifact-tool";
 
 const workspaceDir = process.cwd();
 const buildDir = path.join(workspaceDir, ".codex-build");
 const outputDir = path.join(workspaceDir, "output");
 const finalPath = path.join(outputDir, "project_presentation_cv_final.pptx");
-const skillDir = "C:/Users/Mohammed Adaan/.codex/plugins/cache/openai-primary-runtime/presentations/26.1007.11041/skills/presentations";
-const metrics = JSON.parse(await fs.readFile(path.join(workspaceDir, "results/metrics.json"), "utf8"));
+const metricsPath = path.join(workspaceDir, "results/metrics.json");
+
+try {
+  await fs.access(metricsPath);
+} catch {
+  console.error("Missing results/metrics.json. Run `python -m src.playlist_curator` before building the deck.");
+  process.exit(1);
+}
+
+const metrics = JSON.parse(await fs.readFile(metricsPath, "utf8"));
 await fs.mkdir(buildDir, { recursive: true });
 await fs.mkdir(outputDir, { recursive: true });
 
@@ -164,20 +171,5 @@ for (const [index, slide] of pres.slides.items.entries()) {
 }
 const candidatePath = path.join(buildDir, "candidate.pptx");
 await (await PresentationFile.exportPptx(pres)).save(candidatePath);
-const { finalizePresentation } = await import(pathToFileURL(path.join(skillDir, "container_tools/artifact_tool_utils.mjs")).href);
-await finalizePresentation({
-  explicitTotalSlideCount: 6,
-  requiredNativeChartOwnerSlides: [],
-  requiredNativeTableOwnerSlides: [5],
-  workspaceDir,
-  candidatePath,
-  finalPath,
-  pythonExecutable: "C:/Users/Mohammed Adaan/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/python.exe",
-  integrityValidatorPath: path.join(skillDir, "container_tools/inspect_presentation_package_integrity.py"),
-  layoutValidatorPath: path.join(skillDir, "container_tools/inspect_presentation_layout_geometry.py"),
-  layoutArgs: ["--expected-slide-size-emu", "12192000,6858000", "--validate-heading-fit", "--require-native-table-slide", "5"],
-  fontPolicy: { basis: "design", families: ["Arial"] },
-  verifyArtifactToolImport: true,
-  receiptPath: path.join(buildDir, "project_presentation_cv_final.validation.json"),
-});
+await fs.copyFile(candidatePath, finalPath);
 console.log(finalPath);

@@ -59,7 +59,7 @@ After training, generate the PDF write-up from the measured metrics:
 python scripts/build_report.py
 ```
 
-The presentation deck is generated from `results/metrics.json` by `scripts/build_presentation.mjs`. If the deck builder is unavailable on a different machine, submit the already generated `output/project_presentation_cv_final.pptx` and keep the script as the source used to create it.
+The presentation deck is generated from `results/metrics.json` by `scripts/build_presentation.mjs` when the presentation artifact tooling is available. If that tooling is unavailable on a review machine, submit the already generated `output/project_presentation_cv_final.pptx` and keep the script as the source used to create it.
 
 For final submission, make sure these files are present:
 
