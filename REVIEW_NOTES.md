@@ -82,3 +82,37 @@ streamlit run app.py
 If asked what the project proves, say:
 
 > It shows that acoustic features can provide a reproducible baseline for ranking broad playlist genres. It does not prove personal taste prediction, because that would require user-specific playlist histories and listener-level evaluation.
+
+## Lakshya's Individual Defense & Viva Cheat Sheet
+
+When evaluated on your individual contributions, use this section to confidently explain your technical ownership and the specific codebase files you worked on.
+
+### Codebase Ownership & File Walkthrough
+
+| File | What You Owned & How to Explain It |
+|---|---|
+| [`src/playlist_curator.py`](file:///Users/lakshya/Builds/University/ml-playlist-classifier/src/playlist_curator.py) | **Evaluation Methodology & Feature Engineering Validation**: Designed the leakage-free evaluation scheme. Ensured grouping occurs by unique `track_id` *before* the 80/20 train/test split. Formulated the multi-label target aggregation. Verified that preprocessing (median imputation + standard scaling) is encapsulated inside scikit-learn `Pipeline` objects to prevent cross-validation data leakage. Implemented metric computation: Macro F1, Micro F1, Exact Subset Accuracy, Top-1 Hit Rate, and Recall@3. |
+| [`app.py`](file:///Users/lakshya/Builds/University/ml-playlist-classifier/app.py) | **Live Demo Flow & Error Handling**: Built demo upload validation for user-supplied audio feature CSVs. Handled missing model bundle states gracefully, structured probability output ranking (Top 3 genres), and provided a formatted CSV download for recommendations. |
+| [`scripts/build_report.py`](file:///Users/lakshya/Builds/University/ml-playlist-classifier/scripts/build_report.py) | **Automated Report Generation**: Developed the ReportLab script that ingests `results/metrics.json` and automatically compiles a clean, publication-ready 2-page project PDF report without manual copying of metrics. |
+| [`scripts/build_presentation.mjs`](file:///Users/lakshya/Builds/University/ml-playlist-classifier/scripts/build_presentation.mjs) | **Automated Slide Presentation Workflow**: Created the portable Node.js slide generator using PptxGenJS that turns verified experimental metrics into a structured 6-slide executive deck (`output/project_presentation_cv_final.pptx`). |
+| [`DEMO_GUIDE.md`](file:///Users/lakshya/Builds/University/ml-playlist-classifier/DEMO_GUIDE.md) & [`README.md`](file:///Users/lakshya/Builds/University/ml-playlist-classifier/README.md) | **Submission QA, Reproducibility & Checklist**: Structured the reproducibility documentation, seed anchoring (seed 42), the 2-minute live demo script, and the pre-submission verification checklist. |
+
+---
+
+### Five Core Methodology Decisions to Defend
+
+1. **Why group by `track_id` before train/test splitting?**
+   - *Defense*: The raw dataset contains 32,833 playlist-track occurrences for only 28,356 unique tracks. If we split at the row level, identical tracks would exist simultaneously in both training and test sets. This creates severe optimistic data leakage (evaluating on memorized songs). Grouping first and averaging numeric audio attributes guarantees an honest out-of-sample evaluation.
+
+2. **Why formulate as Multi-Label Classification rather than Multi-Class?**
+   - *Defense*: Tracks frequently straddle genre boundaries (e.g., Pop and R&B, or EDM and Latin). Forcing each song into a single genre label discards ground-truth playlist associations. Multi-label classification models each genre independently via binary relevance while allowing joint ranking.
+
+3. **Why use Macro F1 as the primary model selection criterion?**
+   - *Defense*: Accuracy and Micro F1 can be misleadingly high if dominated by dominant genres or true negatives. Macro F1 computes the unweighted mean F1 across all six genre classes, ensuring the selected model performs well across every genre rather than over-indexing on majority classes.
+
+4. **Why restrict to 12 acoustic features and exclude metadata/popularity?**
+   - *Defense*: Playlist name, playlist ID, and subgenre directly leak the target labels. Popularity reflects external commercial trends and temporal virality rather than inherent musical content. Using only intrinsic audio attributes (tempo, energy, acousticness, etc.) keeps the system purely content-based.
+
+5. **How does this address the "User Taste" objective?**
+   - *Defense*: The provided course dataset lacks user interaction logs or personalized listening histories. We explicitly adapted the task to a content-based proxy: mapping track audio properties to broad playlist genres. For true user taste curation, collaborative filtering or user-specific playlist histories would be required.
+
