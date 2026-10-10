@@ -40,5 +40,5 @@ The reference API audio-features endpoint is restricted for new use cases. This 
 
 | Team member | Contribution |
 |---|---|
-| Mohammed Adaan Hamad | Built the data preparation and model training pipeline, including track-level grouping, multi-label target creation, model comparison, metric generation, and saved prediction outputs. |
-| Lakshya Jeet Singh | Prepared the project documentation and review materials, including the README, demo guide, report and presentation generation scripts, Streamlit demo checks, and final submission readiness review. |
+| Mohammed Adaan Hamad | Worked on dataset preparation and modeling, including CSV validation, track-level grouping, multi-label target setup, model comparison, metric generation, and prediction-output review. |
+| Lakshya Jeet Singh | Worked on model evaluation and project delivery, including feature-selection review, validation of the train/test methodology, Streamlit demo readiness, report and presentation workflow, and final submission QA. |
