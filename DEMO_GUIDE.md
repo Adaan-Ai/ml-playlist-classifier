@@ -38,9 +38,7 @@ The reference API audio-features endpoint is restricted for new use cases. This 
 
 ## Individual contribution record
 
-Fill this in with the actual work completed by each team member before submission.
-
 | Team member | Contribution |
 |---|---|
-| Mohammed Adaan Hamad | [Data preparation, model implementation, evaluation, or demo work] |
-| Lakshya Jeet Singh | [Report, slide deck, interface, or analysis work] |
+| Mohammed Adaan Hamad | Built the data preparation and model training pipeline, including track-level grouping, multi-label target creation, model comparison, metric generation, and saved prediction outputs. |
+| Lakshya Jeet Singh | Prepared the project documentation and review materials, including the README, demo guide, report and presentation generation scripts, Streamlit demo checks, and final submission readiness review. |
