@@ -43,6 +43,33 @@ Generated files under `results/`:
 - `test_predictions.csv`: held-out actual genres and predictions. Commit this for review.
 - `playlist_model.joblib`: selected model and feature schema. This file is intentionally ignored by Git because it is a generated binary.
 
+## Modeling decisions
+
+The modeling workflow is designed to balance rigorous validation, content-based recommendation fidelity, and strict leakage prevention:
+
+1. **Multi-label target formulation**:
+   Instead of forcing songs into a single genre (which discards legitimate crossover tracks like Pop/R&B or EDM/Latin), we formulate the problem as multi-label binary relevance across six top-level genre targets: `edm`, `latin`, `pop`, `r&b`, `rap`, and `rock`.
+
+2. **Model family comparison**:
+   We evaluate three complementary model families on the 80% development split using 5-fold cross-validation:
+   - **Logistic Regression**: Linear baseline with L2 penalty, providing fast, calibrated probability estimates.
+   - **Support Vector Classifier (RBF Kernel)**: Non-linear boundary learner mapping acoustic feature relationships in reproducing kernel Hilbert space.
+   - **Random Forest**: Non-parametric ensemble of 220 decision trees capable of modeling complex feature thresholds and non-linear feature interactions without assuming linear separability.
+
+3. **Leakage-free preprocessing**:
+   All feature transformations (median imputation for missing audio values and standard z-score normalization) are encapsulated inside `sklearn.pipeline.Pipeline` objects fitted strictly within training folds, ensuring zero leakage of test fold statistics into training.
+
+4. **Selection criterion (Macro F1)**:
+   The winning model is selected by highest mean cross-validation **Macro F1**. Unlike Micro F1 or accuracy (which can be inflated by majority genre prevalence or true negatives), Macro F1 treats all six genres equally and penalizes models that fail on minority classes.
+
+5. **Multi-dimensional evaluation suite**:
+   The held-out 20% test set evaluates five metrics:
+   - **Macro F1**: Class-unweighted average harmonic mean of precision and recall.
+   - **Micro F1**: Global aggregated F1 score across all track-genre pairs.
+   - **Exact Subset Accuracy**: Percentage of tracks where every predicted binary label matches truth exactly.
+   - **Top-1 Genre Hit Rate**: Whether the model's highest-confidence predicted genre belongs to the track's true genre set.
+   - **Recall@3**: Proportion of the track's true genres captured within the top three predicted recommendations (directly aligning with the Streamlit demo).
+
 ## Run the demo
 
 ```powershell
