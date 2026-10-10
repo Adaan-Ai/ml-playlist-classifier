@@ -39,9 +39,9 @@ The pipeline creates one row per unique track and a six-column multi-hot genre l
 
 Generated files under `results/`:
 
-- `metrics.json`: data dimensions, split counts, per-model cross-validation metrics, and the selected model's final test metrics.
-- `test_predictions.csv`: held-out actual genres and predictions.
-- `playlist_model.joblib`: selected model and feature schema.
+- `metrics.json`: data dimensions, split counts, per-model cross-validation metrics, and the selected model's final test metrics. Commit this for review.
+- `test_predictions.csv`: held-out actual genres and predictions. Commit this for review.
+- `playlist_model.joblib`: selected model and feature schema. This file is intentionally ignored by Git because it is a generated binary.
 
 ## Run the demo
 
@@ -49,7 +49,27 @@ Generated files under `results/`:
 streamlit run app.py
 ```
 
-Upload a CSV with the same 12 audio feature columns. The app returns the three highest ranked playlist genres and their estimated probabilities.
+Upload a CSV with the same 12 audio feature columns. The app returns the three highest ranked playlist genres and their estimated probabilities. A small upload example is available at `samples/demo_tracks.csv`.
+
+## Build review deliverables
+
+After training, generate the PDF write-up from the measured metrics:
+
+```powershell
+python scripts/build_report.py
+```
+
+The presentation deck is generated from `results/metrics.json` by `scripts/build_presentation.mjs`. If the deck builder is unavailable on a different machine, submit the already generated `output/project_presentation_cv_final.pptx` and keep the script as the source used to create it.
+
+For final submission, make sure these files are present:
+
+- `README.md`: setup and run instructions.
+- `DEMO_GUIDE.md`: live-review sequence and individual contribution record.
+- `REFERENCES.md`: source and data notes.
+- `results/metrics.json`: measured model results.
+- `results/test_predictions.csv`: held-out prediction examples.
+- `output/project_report.pdf`: two-page project write-up.
+- `output/project_presentation_cv_final.pptx`: review slide deck.
 
 ## Files
 
@@ -59,6 +79,7 @@ src/playlist_curator.py           data preparation, model comparison, evaluation
 scripts/prepare_dataset.py        archive extraction and schema validation
 scripts/build_report.py           two-page PDF write-up from measured metrics
 scripts/build_presentation.mjs    editable six-slide deck from measured metrics
+samples/demo_tracks.csv           small CSV for Streamlit upload testing
 output/project_report.pdf         assignment write-up
 output/project_presentation_cv_final.pptx  final review slides
 ```
@@ -74,4 +95,4 @@ output/project_presentation_cv_final.pptx  final review slides
 
 ## Reproducibility
 
-The seed is fixed at 42. Keep the dataset, `results/metrics.json`, PDF, and slide deck consistent. Do not commit the dataset, virtual environment, or model binary to the private repository by default.
+The seed is fixed at 42. Keep the dataset, `results/metrics.json`, PDF, and slide deck consistent. Do not commit the dataset, virtual environment, or model binary to the private repository by default. If results are regenerated, rebuild the PDF and slide deck before submission so the numbers match.
