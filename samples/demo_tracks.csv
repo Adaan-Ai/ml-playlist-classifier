@@ -1,0 +1,4 @@
+track_id,track_name,track_artist,danceability,energy,key,loudness,mode,speechiness,acousticness,instrumentalness,liveness,valence,tempo,duration_ms
+demo_001,Bright Night,Demo Artist,0.78,0.82,5,-5.4,1,0.046,0.08,0.0002,0.12,0.74,124.0,210000
+demo_002,Quiet Window,Demo Artist,0.42,0.31,9,-13.8,0,0.034,0.72,0.018,0.09,0.28,86.5,184000
+demo_003,Heavy Pulse,Demo Artist,0.61,0.94,2,-3.9,1,0.088,0.03,0.0000,0.24,0.52,151.2,236000
