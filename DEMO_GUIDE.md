@@ -8,6 +8,18 @@
 4. Open `output/project_presentation_cv_final.pptx` and `output/project_report.pdf`.
 5. Confirm section E is shown on the slides and PDF.
 
+## Final submission checklist
+
+- Confirm the private GitHub repository is shared with the faculty and TA reviewers.
+- Confirm `README.md` opens with the team name, section, setup commands, training command, and demo command.
+- Confirm `results/metrics.json` and `results/test_predictions.csv` match the latest training run.
+- Confirm `output/project_report.pdf` was rebuilt after the latest metrics were generated.
+- Confirm `output/project_presentation_cv_final.pptx` was rebuilt after the latest metrics were generated.
+- Confirm `results/playlist_model.joblib` exists locally for the live demo, even though it is not committed.
+- Launch Streamlit and upload `samples/demo_tracks.csv` once before the review.
+- Keep the raw dataset out of Git unless the instructor explicitly approves redistribution.
+- Be ready to explain each teammate's contribution from the table at the end of this guide.
+
 ## Two-minute demo sequence
 
 1. Explain the input: 12 acoustic features for a track.
