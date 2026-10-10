@@ -86,7 +86,13 @@ After training, generate the PDF write-up from the measured metrics:
 python scripts/build_report.py
 ```
 
-The presentation deck is generated from `results/metrics.json` by `scripts/build_presentation.mjs` when the presentation artifact tooling is available. If that tooling is unavailable on a review machine, submit the already generated `output/project_presentation_cv_final.pptx` and keep the script as the source used to create it.
+The presentation deck is generated from the same measured metrics:
+
+```powershell
+python scripts/build_presentation.py
+```
+
+This writes `output/project_presentation_cv_final.pptx`. Rebuild the PDF and deck after every training run so the numbers match.
 
 For final submission, make sure these files are present:
 
@@ -106,7 +112,7 @@ app.py                            Streamlit demo
 src/playlist_curator.py           data preparation, model comparison, evaluation
 scripts/prepare_dataset.py        archive extraction and schema validation
 scripts/build_report.py           two-page PDF write-up from measured metrics
-scripts/build_presentation.mjs    editable six-slide deck from measured metrics
+scripts/build_presentation.py     six-slide deck from measured metrics
 samples/demo_tracks.csv           small CSV for Streamlit upload testing
 REVIEW_NOTES.md                   technical Q&A preparation notes
 output/project_report.pdf         assignment write-up
