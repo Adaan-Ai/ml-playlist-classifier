@@ -65,6 +65,7 @@ For final submission, make sure these files are present:
 
 - `README.md`: setup and run instructions.
 - `DEMO_GUIDE.md`: live-review sequence and individual contribution record.
+- `REVIEW_NOTES.md`: technical Q&A preparation notes.
 - `REFERENCES.md`: source and data notes.
 - `results/metrics.json`: measured model results.
 - `results/test_predictions.csv`: held-out prediction examples.
@@ -80,6 +81,7 @@ scripts/prepare_dataset.py        archive extraction and schema validation
 scripts/build_report.py           two-page PDF write-up from measured metrics
 scripts/build_presentation.mjs    editable six-slide deck from measured metrics
 samples/demo_tracks.csv           small CSV for Streamlit upload testing
+REVIEW_NOTES.md                   technical Q&A preparation notes
 output/project_report.pdf         assignment write-up
 output/project_presentation_cv_final.pptx  final review slides
 ```
