@@ -84,12 +84,12 @@ def load_metrics():
         return DEFAULT_METRICS
     try:
         raw = json.loads(METRICS_PATH.read_text())
+        # Native presentation schema
         if "cv" in raw and "test" in raw and "per_genre" in raw:
             return raw
-
+        # Map from training output schema (results/metrics.json)
         models_data = raw.get("models", {})
         test_eval = raw.get("test_evaluation", {})
-
         cv = {}
         for m in MODELS:
             mod = models_data.get(m, {})
@@ -100,7 +100,6 @@ def load_metrics():
                 "recall3": mod.get("recall_at_3", 0.0),
                 "subset": mod.get("subset_accuracy", 0.0),
             }
-
         test = {
             "macro_f1": test_eval.get("macro_f1", 0.0),
             "micro_f1": test_eval.get("micro_f1", 0.0),
@@ -108,21 +107,14 @@ def load_metrics():
             "top1": test_eval.get("precision_at_1", 0.0),
             "recall3": test_eval.get("recall_at_3", 0.0),
         }
-
         per_genre_raw = test_eval.get("per_genre", {})
-        genre_display_names = {
-            "rock": "Rock", "edm": "EDM", "rap": "Rap",
-            "r&b": "R&B", "latin": "Latin", "pop": "Pop",
-        }
-        sorted_genres = sorted(per_genre_raw.items(), key=lambda x: x[1].get("f1", 0), reverse=True)
+        display = {"rock": "Rock", "edm": "EDM", "rap": "Rap", "r&b": "R&B", "latin": "Latin", "pop": "Pop"}
         per_genre = [
-            [genre_display_names.get(g_key, g_key.capitalize()), g_val.get("f1", 0.0), g_val.get("support", 0)]
-            for g_key, g_val in sorted_genres
+            [display.get(k, k.capitalize()), v.get("f1", 0.0), v.get("support", 0)]
+            for k, v in sorted(per_genre_raw.items(), key=lambda x: x[1].get("f1", 0), reverse=True)
         ]
-
-        adapted = {"cv": cv, "test": test, "per_genre": per_genre}
-        print(f"[info] Successfully loaded and mapped metrics from {METRICS_PATH}")
-        return adapted
+        print(f"[info] Loaded and mapped metrics from {METRICS_PATH}")
+        return {"cv": cv, "test": test, "per_genre": per_genre}
     except Exception as exc:
         print(f"[warn] {METRICS_PATH.name} mapping error ({exc!r}); using hardcoded values.")
         return DEFAULT_METRICS
@@ -636,7 +628,7 @@ def slide_7(prs):
         _text(s, x + 0.22, y + 1.25, w - 0.44, 0.8, sub, size=12 if is_path else 14,
               color=TEAL if is_path else CHARCOAL, font=MONO if is_path else FONT, label=f"s7 block sub {i}")
         if i < 3:
-            ar = _rect(s, x + w + 0.1, y + h / 2 - 0.15, arrow_gap - 0.2, 0.3, fill=TEAL, shape=MSO_SHAPE.RIGHT_ARROW)
+            _rect(s, x + w + 0.1, y + h / 2 - 0.15, arrow_gap - 0.2, 0.3, fill=TEAL, shape=MSO_SHAPE.RIGHT_ARROW)
 
     cy, ch = 4.0, 2.8
     _card(s, MARGIN, cy, CONTENT_W, ch)
@@ -708,8 +700,6 @@ def slide_8(prs):
 # ---------------------------------------------------------------- Keynote compatibility
 def _fix_keynote_compat(pptx_path):
     """python-pptx leaves <p:sldSz type="screen4x3"/> after a 16:9 resize; Keynote rejects that."""
-    import io, re, zipfile
-
     with open(pptx_path, 'rb') as f:
         in_zip = zipfile.ZipFile(f)
         out_buf = io.BytesIO()
