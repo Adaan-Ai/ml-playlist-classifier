@@ -1,0 +1,182 @@
+{
+  "dataset": "User-supplied Spotify Songs CSV",
+  "target": "multi-label playlist_genre memberships per unique track_id",
+  "seed": 42,
+  "n_source_rows": 32833,
+  "n_unique_tracks": 28356,
+  "n_features": 12,
+  "n_classes": 6,
+  "classes": [
+    "edm",
+    "latin",
+    "pop",
+    "r&b",
+    "rap",
+    "rock"
+  ],
+  "class_track_counts": {
+    "edm": 5537,
+    "latin": 4641,
+    "pop": 5132,
+    "r&b": 5138,
+    "rap": 5486,
+    "rock": 4451
+  },
+  "tracks_with_multiple_genres": 1687,
+  "split": {
+    "train": 22684,
+    "test": 5672,
+    "test_fraction": 0.2,
+    "unit": "unique track_id"
+  },
+  "cross_validation": {
+    "folds": 5,
+    "selection_metric": "mean macro F1",
+    "unit": "unique track_id within development set"
+  },
+  "models": {
+    "Logistic Regression": {
+      "micro_f1": 0.46300738965472005,
+      "macro_f1": 0.47262241763689267,
+      "subset_accuracy": 0.0974256446797039,
+      "precision_at_1": 0.4847031598703041,
+      "recall_at_3": 0.8255218779239792,
+      "micro_precision": 0.3401144812006266,
+      "micro_recall": 0.7249559213143935,
+      "per_genre": {
+        "edm": {
+          "f1": 0.5294237118245676,
+          "support": 4379
+        },
+        "latin": {
+          "f1": 0.3786639907072976,
+          "support": 3762
+        },
+        "pop": {
+          "f1": 0.3776513359827488,
+          "support": 4184
+        },
+        "r&b": {
+          "f1": 0.4375950536105053,
+          "support": 4115
+        },
+        "rap": {
+          "f1": 0.5478979076951684,
+          "support": 4335
+        },
+        "rock": {
+          "f1": 0.5645025060010684,
+          "support": 3555
+        }
+      }
+    },
+    "RBF SVM": {
+      "micro_f1": 0.5252271816116881,
+      "macro_f1": 0.5334586978899222,
+      "subset_accuracy": 0.19811369694368738,
+      "precision_at_1": 0.548095611276127,
+      "recall_at_3": 0.8654176417313157,
+      "micro_precision": 0.40015975374169777,
+      "micro_recall": 0.7640295961564831,
+      "per_genre": {
+        "edm": {
+          "f1": 0.6194970559055839,
+          "support": 4379
+        },
+        "latin": {
+          "f1": 0.4364398203026513,
+          "support": 3762
+        },
+        "pop": {
+          "f1": 0.43652676266982227,
+          "support": 4184
+        },
+        "r&b": {
+          "f1": 0.47507852828627933,
+          "support": 4115
+        },
+        "rap": {
+          "f1": 0.6122634628514494,
+          "support": 4335
+        },
+        "rock": {
+          "f1": 0.6209465573237475,
+          "support": 3555
+        }
+      }
+    },
+    "Random Forest": {
+      "micro_f1": 0.5716863688188756,
+      "macro_f1": 0.562834541431481,
+      "subset_accuracy": 0.5389702015060182,
+      "precision_at_1": 0.5887850590811431,
+      "recall_at_3": 0.8779450779773128,
+      "micro_precision": 0.5856649817135372,
+      "micro_recall": 0.5583680252485073,
+      "per_genre": {
+        "edm": {
+          "f1": 0.6935701875938949,
+          "support": 4379
+        },
+        "latin": {
+          "f1": 0.4484059137521439,
+          "support": 3762
+        },
+        "pop": {
+          "f1": 0.4004984502179137,
+          "support": 4184
+        },
+        "r&b": {
+          "f1": 0.4986377704658874,
+          "support": 4115
+        },
+        "rap": {
+          "f1": 0.6453901325075776,
+          "support": 4335
+        },
+        "rock": {
+          "f1": 0.6905047940514688,
+          "support": 3555
+        }
+      }
+    }
+  },
+  "selected_model": "Random Forest",
+  "selection_metric": "mean macro F1 across 5-fold CV on development set",
+  "test_evaluation": {
+    "micro_f1": 0.5763026771387552,
+    "macro_f1": 0.5630431468415501,
+    "subset_accuracy": 0.5486600846262342,
+    "precision_at_1": 0.5936177715091678,
+    "recall_at_3": 0.8815291490362012,
+    "micro_precision": 0.5896992741099205,
+    "micro_recall": 0.5635012386457473,
+    "per_genre": {
+      "edm": {
+        "f1": 0.6827133479212254,
+        "support": 1158
+      },
+      "latin": {
+        "f1": 0.45684620376378976,
+        "support": 879
+      },
+      "pop": {
+        "f1": 0.39090909090909093,
+        "support": 948
+      },
+      "r&b": {
+        "f1": 0.49109947643979057,
+        "support": 1023
+      },
+      "rap": {
+        "f1": 0.6532786885245901,
+        "support": 1151
+      },
+      "rock": {
+        "f1": 0.7034120734908137,
+        "support": 896
+      }
+    }
+  },
+  "note": "Scores are for the supplied CSV and must not be generalized to all Spotify tracks or listeners."
+}

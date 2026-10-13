@@ -78,6 +78,14 @@ streamlit run app.py
 
 Upload a CSV with the same 12 audio feature columns. The app returns the three highest ranked playlist genres and their estimated probabilities. A small upload example is available at `samples/demo_tracks.csv`.
 
+## Sanity check
+
+To quickly verify that the trained model bundle, deliverables, and sample inference work without rerunning full training:
+
+```powershell
+python scripts/sanity_check.py
+```
+
 ## Build review deliverables
 
 After training, generate the PDF write-up from the measured metrics:
@@ -113,6 +121,7 @@ src/playlist_curator.py           data preparation, model comparison, evaluation
 scripts/prepare_dataset.py        archive extraction and schema validation
 scripts/build_report.py           two-page PDF write-up from measured metrics
 scripts/build_presentation.py     six-slide deck from measured metrics
+scripts/sanity_check.py           fast offline verification of model bundle and inference
 samples/demo_tracks.csv           small CSV for Streamlit upload testing
 REVIEW_NOTES.md                   technical Q&A preparation notes
 output/project_report.pdf         assignment write-up
