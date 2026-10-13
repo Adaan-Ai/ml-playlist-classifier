@@ -7,6 +7,10 @@ from pathlib import Path
 import joblib
 import pandas as pd
 
+ROOT = Path(__file__).resolve().parent.parent
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+
 from src.playlist_curator import recommend
 
 
@@ -68,11 +72,11 @@ def main() -> int:
             sample_df = pd.read_csv(sample_path)
             results = recommend(bundle, sample_df)
             assert not results.empty, "Recommendation returned empty dataframe."
-            assert "top_1_genre" in results.columns, "Missing top_1_genre in output columns."
-            assert "top_3_genre" in results.columns, "Missing top_3_genre in output columns."
+            assert "recommended_genres" in results.columns, "Missing recommended_genres in output columns."
+            assert "ranked_genres" in results.columns, "Missing ranked_genres in output columns."
             print(f"[OK] Demo recommendation inference succeeded on {len(sample_df)} sample tracks:")
             for _, row in results.iterrows():
-                print(f"     * {row['track_name']} ({row['track_artist']}): 1st={row['top_1_genre']} ({row['prob_1']:.2f}), 2nd={row['top_2_genre']} ({row['prob_2']:.2f}), 3rd={row['top_3_genre']} ({row['prob_3']:.2f})")
+                print(f"     * {row['track_name']} ({row['track_artist']}): {row['ranked_genres']}")
         except Exception as exc:
             errors.append(f"Failed inference test with model bundle: {exc}")
 
