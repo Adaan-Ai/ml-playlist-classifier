@@ -1,6 +1,6 @@
 # Technical review notes
 
-Use these notes to prepare for individual Q&A. The goal is to explain the project decisions clearly, not to memorize exact wording.
+Use these notes to prepare for the individual Q&A session. Focus on explaining design decisions in your own words rather than reciting exact phrasing.
 
 ## Problem framing
 
